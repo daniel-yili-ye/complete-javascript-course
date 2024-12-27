@@ -14,12 +14,12 @@ const player1Section = document.querySelector('.player--1');
 
 const img = document.querySelector('.dice');
 
-let currScores, scores, activePlayer, active;
+let currScore, scores, activePlayer, active;
 
 init();
 
 function init() {
-  currScores = [0, 0];
+  currScore = 0;
   scores = [0, 0];
   activePlayer = 0;
   active = true;
@@ -28,6 +28,8 @@ function init() {
   current1El.textContent = 0;
   score0El.textContent = 0;
   score1El.textContent = 0;
+
+  img.classList.add('hidden');
 
   player0Section.classList.remove('player--winner');
   player1Section.classList.remove('player--winner');
@@ -41,7 +43,11 @@ function rollDice() {
 }
 
 function switchPlayer() {
+  document.querySelector(`#current--${activePlayer}`).textContent = 0;
+  currScore = 0;
+
   activePlayer = activePlayer === 0 ? 1 : 0;
+
   player0Section.classList.toggle('player--active');
   player1Section.classList.toggle('player--active');
 }
@@ -51,16 +57,15 @@ btnRollDice.addEventListener('click', function () {
   if (active) {
     const roll = rollDice();
 
+    img.classList.remove('hidden');
     img.src = `dice-${roll}.png`;
 
     if (roll === 1) {
-      currScores[activePlayer] = 0;
-      document.querySelector(`#current--${activePlayer}`).textContent = 0;
       switchPlayer();
     } else {
-      currScores[activePlayer] += roll;
+      currScore += roll;
       document.querySelector(`#current--${activePlayer}`).textContent =
-        currScores[activePlayer];
+        currScore;
     }
   }
 });
@@ -68,15 +73,15 @@ btnRollDice.addEventListener('click', function () {
 // user holds score
 btnHoldGame.addEventListener('click', function () {
   if (active) {
-    scores[activePlayer] += currScores[activePlayer];
-    currScores[activePlayer] = 0;
+    scores[activePlayer] += currScore;
 
     document.querySelector(`#score--${activePlayer}`).textContent =
       scores[activePlayer];
-    document.querySelector(`#current--${activePlayer}`).textContent = 0;
 
     if (scores[activePlayer] >= 100) {
       // player wins
+      img.classList.add('hidden');
+
       document
         .querySelector(`.player--${activePlayer}`)
         .classList.add('player--winner');
